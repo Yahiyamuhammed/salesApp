@@ -8,101 +8,159 @@ import {
   StyleSheet,
 } from "react-native";
 
+type Product = {
+  name: string;
+  qty: string;
+  weight: string;
+};
+
 export default function AddSaleScreen() {
   const [shopName, setShopName] = useState("");
-  const [productName, setProductName] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [weight, setWeight] = useState("");
-  const [returnProduct, setReturnProduct] = useState("");
-  const [returnQuantity, setReturnQuantity] = useState("");
-  const [returnWeight, setReturnWeight] = useState("");
+
+  const [soldProducts, setSoldProducts] = useState<Product[]>([
+    { name: "", qty: "", weight: "" },
+  ]);
+
+  const [returnProducts, setReturnProducts] = useState<Product[]>([
+    { name: "", qty: "", weight: "" },
+  ]);
+
+  const addSoldProduct = () => {
+    setSoldProducts([...soldProducts, { name: "", qty: "", weight: "" }]);
+  };
+
+  const addReturnProduct = () => {
+    setReturnProducts([...returnProducts, { name: "", qty: "", weight: "" }]);
+  };
+
+  const updateSoldProduct = (
+    index: number,
+    field: keyof Product,
+    value: string
+  ) => {
+    const updated = [...soldProducts];
+    updated[index][field] = value;
+    setSoldProducts(updated);
+  };
+
+  const updateReturnProduct = (
+    index: number,
+    field: keyof Product,
+    value: string
+  ) => {
+    const updated = [...returnProducts];
+    updated[index][field] = value;
+    setReturnProducts(updated);
+  };
 
   const handleSave = () => {
-    // For now, just log data
-    console.log({
-      shopName,
-      productName,
-      quantity,
-      weight,
-      returnProduct,
-      returnQuantity,
-      returnWeight,
-    });
-    alert("Sale saved (dummy)");
+    console.log({ shopName, soldProducts, returnProducts });
+    alert("Sale saved");
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Add Sale</Text>
 
-      {/* Shop Name */}
+      {/* Shop */}
       <Text style={styles.label}>Shop Name</Text>
       <TextInput
-        placeholder="Enter or select shop"
+        placeholder="Enter shop name"
+        placeholderTextColor="#999"
         style={styles.input}
         value={shopName}
         onChangeText={setShopName}
       />
 
-      {/* Product */}
-      <Text style={styles.label}>Product Name</Text>
-      <TextInput
-        placeholder="Enter product name"
-        style={styles.input}
-        value={productName}
-        onChangeText={setProductName}
-      />
+      {/* Sold Products */}
+      <Text style={styles.sectionTitle}>Sold Products</Text>
 
-      <Text style={styles.label}>Quantity</Text>
-      <TextInput
-        placeholder="Number of items"
-        style={styles.input}
-        keyboardType="numeric"
-        value={quantity}
-        onChangeText={setQuantity}
-      />
+      {soldProducts.map((item, index) => (
+        <View key={index} style={styles.card}>
+          <TextInput
+            placeholder="Product name"
+            placeholderTextColor="#999"
+            style={styles.input}
+            value={item.name}
+            onChangeText={(text) =>
+              updateSoldProduct(index, "name", text)
+            }
+          />
 
-      <Text style={styles.label}>Weight (kg)</Text>
-      <TextInput
-        placeholder="Weight in kg"
-        style={styles.input}
-        keyboardType="numeric"
-        value={weight}
-        onChangeText={setWeight}
-      />
+          <TextInput
+            placeholder="Quantity"
+            placeholderTextColor="#999"
+            style={styles.input}
+            keyboardType="numeric"
+            value={item.qty}
+            onChangeText={(text) =>
+              updateSoldProduct(index, "qty", text)
+            }
+          />
 
-      {/* Returns (optional) */}
-      <Text style={[styles.sectionTitle, { marginTop: 20 }]}>Returns (optional)</Text>
+          <TextInput
+            placeholder="Weight (kg)"
+            placeholderTextColor="#999"
+            style={styles.input}
+            keyboardType="numeric"
+            value={item.weight}
+            onChangeText={(text) =>
+              updateSoldProduct(index, "weight", text)
+            }
+          />
+        </View>
+      ))}
 
-      <Text style={styles.label}>Product Name</Text>
-      <TextInput
-        placeholder="Returned product name"
-        style={styles.input}
-        value={returnProduct}
-        onChangeText={setReturnProduct}
-      />
+      <TouchableOpacity style={styles.outlineBtn} onPress={addSoldProduct}>
+        <Text style={styles.outlineBtnText}>+ Add Sold Product</Text>
+      </TouchableOpacity>
 
-      <Text style={styles.label}>Quantity</Text>
-      <TextInput
-        placeholder="Number of items"
-        style={styles.input}
-        keyboardType="numeric"
-        value={returnQuantity}
-        onChangeText={setReturnQuantity}
-      />
+      {/* Returns */}
+      <Text style={styles.sectionTitle}>Returned Products</Text>
 
-      <Text style={styles.label}>Weight (kg)</Text>
-      <TextInput
-        placeholder="Weight in kg"
-        style={styles.input}
-        keyboardType="numeric"
-        value={returnWeight}
-        onChangeText={setReturnWeight}
-      />
+      {returnProducts.map((item, index) => (
+        <View key={index} style={styles.card}>
+          <TextInput
+            placeholder="Product name"
+            placeholderTextColor="#999"
+            style={styles.input}
+            value={item.name}
+            onChangeText={(text) =>
+              updateReturnProduct(index, "name", text)
+            }
+          />
 
-      {/* Save Button */}
-      <TouchableOpacity style={styles.button} onPress={handleSave}>
-        <Text style={styles.buttonText}>Save Sale</Text>
+          <TextInput
+            placeholder="Quantity"
+            placeholderTextColor="#999"
+            style={styles.input}
+            keyboardType="numeric"
+            value={item.qty}
+            onChangeText={(text) =>
+              updateReturnProduct(index, "qty", text)
+            }
+          />
+
+          <TextInput
+            placeholder="Weight (kg)"
+            placeholderTextColor="#999"
+            style={styles.input}
+            keyboardType="numeric"
+            value={item.weight}
+            onChangeText={(text) =>
+              updateReturnProduct(index, "weight", text)
+            }
+          />
+        </View>
+      ))}
+
+      <TouchableOpacity style={styles.outlineBtn} onPress={addReturnProduct}>
+        <Text style={styles.outlineBtnText}>+ Add Returned Product</Text>
+      </TouchableOpacity>
+
+      {/* Save */}
+      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+        <Text style={styles.saveButtonText}>Save Sale</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -111,41 +169,61 @@ export default function AddSaleScreen() {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    backgroundColor: "#121212",
+    backgroundColor: "#ffffff",
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#ffffff",
+    color: "#111111",
     marginBottom: 20,
   },
   label: {
-    color: "#aaaaaa",
+    color: "#666666",
     marginBottom: 6,
-    marginTop: 10,
   },
   input: {
     borderWidth: 1,
-    borderColor: "#333",
-    backgroundColor: "#1e1e1e",
-    color: "#ffffff",
+    borderColor: "#e0e0e0",
+    backgroundColor: "#ffffff",
+    color: "#111111",
     padding: 12,
     borderRadius: 8,
+    marginBottom: 10,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
-    color: "#ffffff",
+    color: "#111111",
+    marginTop: 20,
     marginBottom: 10,
   },
-  button: {
-    backgroundColor: "#4CAF50",
+  card: {
+    backgroundColor: "#f7f7f7",
+    padding: 12,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+  outlineBtn: {
+    borderWidth: 1,
+    borderColor: "#43ca96ff",
+    padding: 12,
+    borderRadius: 10,
+    alignItems: "center",
+    marginTop: 6,
+  },
+  outlineBtnText: {
+    color: "#43ca96ff",
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  saveButton: {
+    backgroundColor: "#43ca96ff",
     padding: 14,
     borderRadius: 10,
     alignItems: "center",
     marginTop: 30,
   },
-  buttonText: {
+  saveButtonText: {
     color: "#ffffff",
     fontSize: 16,
     fontWeight: "600",

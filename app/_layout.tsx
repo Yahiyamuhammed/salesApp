@@ -1,12 +1,20 @@
 import { Stack } from "expo-router";
-import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
+import { initDB } from "@/src/db/database";
 
 export default function RootLayout() {
+  useEffect(() => {
+    initDB();
+  }, []);
+
   return (
-    <SafeAreaProvider>
-      <StatusBar style="dark" backgroundColor="#121212" />
-      <Stack screenOptions={{ headerShown: false }} />
-    </SafeAreaProvider>
+    <>
+      <StatusBar style="light" />
+      <SafeAreaView edges={["top"]} style={{ flex: 1, backgroundColor: "#2B3A51" }}>
+        <Stack screenOptions={{ headerShown: false }} />
+      </SafeAreaView>
+    </>
   );
 }
