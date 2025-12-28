@@ -1,16 +1,43 @@
-import { View, Text, TextInput, TouchableOpacity, Modal } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Modal,
+  ScrollView,
+} from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 import { createSale } from "../../../controllers/salesController";
+import styles from "./addSaleModalStyles";
 
 export default function AddSaleModal({ visible, onClose }) {
   const [shopName, setShopName] = useState("");
-  const [productName, setProductName] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [unit, setUnit] = useState("kg");
-  const [price, setPrice] = useState("");
+  const [products, setProducts] = useState([
+    { name: "", quantity: "", unit: "kg", price: "" },
+  ]);
+
+  const addProductRow = () => {
+    setProducts([
+      ...products,
+      { name: "", quantity: "", unit: "kg", price: "" },
+    ]);
+  };
+
+  const updateProduct = (index, key, value) => {
+    const updated = [...products];
+    updated[index][key] = value;
+    setProducts(updated);
+  };
 
   const handleSubmit = async () => {
+    const formattedProducts = products.map((p) => ({
+      name: p.name,
+      quantity: Number(p.quantity),
+      unit: p.unit,
+      price: Number(p.price),
+    }));
+
     await createSale({
       shop: {
         name: shopName,
@@ -19,40 +46,82 @@ export default function AddSaleModal({ visible, onClose }) {
         accuracy: 0,
         commission: 5,
       },
-      products: [
-        {
-          name: productName,
-          quantity: Number(quantity),
-          unit,
-          price: Number(price),
-        },
-      ],
+      products: formattedProducts,
     });
 
     onClose();
   };
 
   return (
-    <Modal visible={visible} animationType="slide">
-      <SafeAreaView style={{ flex: 1 }}>
-        <View style={{ flex: 1, padding: 20 }}>
-          <Text>Add Sale</Text>
+    <Modal visible={visible} animationType="slide" transparent={false}>
+      {/* SafeAreaView handles top/bottom notches */}
+      <SafeAreaProvider>
+        <SafeAreaView style={styles.safe} edges={["top", "bottom"]}>
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>Add Sale</Text>
+            <TouchableOpacity onPress={onClose}>
+              <Text style={styles.closeText}>✕</Text>
+            </TouchableOpacity>
+          </View>
 
-          <TextInput placeholder="Shop Name" value={shopName} onChangeText={setShopName} />
-          <TextInput placeholder="Product Name" value={productName} onChangeText={setProductName} />
-          <TextInput placeholder="Quantity" keyboardType="numeric" value={quantity} onChangeText={setQuantity} />
-          <TextInput placeholder="Unit (kg/g)" value={unit} onChangeText={setUnit} />
-          <TextInput placeholder="Price" keyboardType="numeric" value={price} onChangeText={setPrice} />
+          <ScrollView contentContainerStyle={styles.container}>
+            <Text style={styles.label}>Shop Name</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter shop name"
+              value={shopName}
+              onChangeText={setShopName}
+            />
 
-          <TouchableOpacity onPress={handleSubmit}>
-            <Text>Save Sale</Text>
-          </TouchableOpacity>
+            <Text style={styles.sectionTitle}>Products</Text>
 
-          <TouchableOpacity onPress={onClose}>
-            <Text>Cancel</Text>
-          </TouchableOpacity>
-        </View>
-      </SafeAreaView>
+            {products.map((item, index) => (
+              <View key={index} style={styles.productCard}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Product name"
+                  value={item.name}
+                  onChangeText={(text) => updateProduct(index, "name", text)}
+                />
+
+                <View style={styles.row}>
+                  <TextInput
+                    style={[styles.input, styles.smallInput]}
+                    placeholder="Qty"
+                    keyboardType="numeric"
+                    value={item.quantity}
+                    onChangeText={(text) =>
+                      updateProduct(index, "quantity", text)
+                    }
+                  />
+                  <TextInput
+                    style={[styles.input, styles.smallInput]}
+                    placeholder="Unit (kg/g)"
+                    value={item.unit}
+                    onChangeText={(text) => updateProduct(index, "unit", text)}
+                  />
+                </View>
+
+                <TextInput
+                  style={styles.input}
+                  placeholder="Price"
+                  keyboardType="numeric"
+                  value={item.price}
+                  onChangeText={(text) => updateProduct(index, "price", text)}
+                />
+              </View>
+            ))}
+
+            <TouchableOpacity style={styles.addMoreBtn} onPress={addProductRow}>
+              <Text style={styles.addMoreText}>+ Add another product</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.saveBtn} onPress={handleSubmit}>
+              <Text style={styles.saveText}>Save Sale</Text>
+            </TouchableOpacity>
+          </ScrollView>
+        </SafeAreaView>
+      </SafeAreaProvider>
     </Modal>
   );
 }
