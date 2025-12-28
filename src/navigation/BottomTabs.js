@@ -2,7 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "../screens/Home/HomeScreen";
 import ProfileScreen from "../screens/Profile/ProfileScreen";
-import AddSaleScreen from "../screens/AddSale/AddSaleScreen";
+import SaleScreen from "../screens/Sale/SaleScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -10,8 +10,8 @@ export default function BottomTabs() {
   return (
     <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen name="Home" component={HomeScreen} />
+      <Tab.Screen name="Sale" component={SaleScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
-      <Tab.Screen name="Add Sale" component={AddSaleScreen} />
     </Tab.Navigator>
   );
 }

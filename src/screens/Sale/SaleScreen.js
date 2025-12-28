@@ -1,8 +1,8 @@
 import React from "react";
 import { View, Text } from "react-native";
-import styles from "./addSaleStyles";
+import styles from "./SaleStyles";
 
-export default function AddSaleScreen() {
+export default function SaleScreen() {
   return (
     <View style={styles.container}>
       <Text>Add Sale Screen</Text>
