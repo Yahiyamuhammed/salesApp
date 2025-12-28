@@ -3,12 +3,14 @@ import * as SQLite from "expo-sqlite";
 export const db = SQLite.openDatabase("app.db");
 
 export const initDB = () => {
-  db.transaction(tx => {
+  db.transaction((tx) => {
     tx.executeSql(`
       CREATE TABLE IF NOT EXISTS shops (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
-        location TEXT,
+        latitude REAL,
+        longitude REAL,
+        accuracy REAL,
         image TEXT,
         commission REAL,
         created_at TEXT
