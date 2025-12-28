@@ -1,11 +1,11 @@
 import React from "react";
 import { View, Text } from "react-native";
-import styles from "./settingsStyles";
+import styles from "./addSaleStyles";
 
-export default function SettingsScreen() {
+export default function AddSaleScreen() {
   return (
     <View style={styles.container}>
-      <Text>Settings Screen</Text>
+      <Text>Add Sale Screen</Text>
     </View>
   );
 }
